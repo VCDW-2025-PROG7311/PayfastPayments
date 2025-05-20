@@ -17,6 +17,12 @@ public class PaymentController : ControllerBase
         _dbContext = dbContext;
     }
 
+    [HttpGet("health")]
+    public IActionResult HealthCheck()
+    {
+        return Ok("App is running!");
+    }
+    
     [HttpPost("initiate-payment")]
     public IActionResult InitiatePayment(decimal amount)
     {
