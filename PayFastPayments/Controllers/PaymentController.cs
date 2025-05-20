@@ -8,15 +8,15 @@ using System.Threading.Tasks;
 [ApiController]
 public class PaymentController : ControllerBase
 {
-    private readonly ApplicationDbContext _dbContext;
+    private readonly TransactionService _transactionService;
     private readonly PayFastService _payFastService;
 
-    public PaymentController(PayFastService payFastService, ApplicationDbContext dbContext)
+    public PaymentController(TransactionService transactionService, PayFastService payFastService)
     {
+        _transactionService = transactionService;
         _payFastService = payFastService;
-        _dbContext = dbContext;
     }
-
+    
     [HttpGet("health")]
     public IActionResult HealthCheck()
     {
@@ -33,12 +33,10 @@ public class PaymentController : ControllerBase
             MerchantId = Environment.GetEnvironmentVariable("PayFast__MerchantId"),
             Amount = amount,
             PaymentStatus = "Initiated",
-            PaymentDate = DateTime.UtcNow, // Use UTC time instead of local time
+            PaymentDate = DateTime.UtcNow,
         };
 
-        _dbContext.Transactions.Add(transaction);
-        _dbContext.SaveChanges();
-
+        _transactionService.AddTransaction(transaction);
         return Redirect(paymentUrl);
     }
 
@@ -47,11 +45,11 @@ public class PaymentController : ControllerBase
     {
         var paymentStatus = await _payFastService.VerifyPaymentResponseAsync(response);
 
-        var transaction = _dbContext.Transactions.LastOrDefault();
+        var transaction = _transactionService.GetTransactions().LastOrDefault();
         if (transaction != null)
         {
             transaction.PaymentStatus = paymentStatus;
-            _dbContext.SaveChanges();
+            _transactionService.SaveTransactions(_transactionService.GetTransactions());
         }
 
         return Ok(paymentStatus);
@@ -71,12 +69,13 @@ public class PaymentController : ControllerBase
     {
         if (payment_status == "COMPLETE")
         {
-            var transaction = _dbContext.Transactions.FirstOrDefault(t => t.MerchantId == m_payment_id);
+            var transaction = _transactionService.GetTransactions()
+                .FirstOrDefault(t => t.MerchantId == m_payment_id);
             if (transaction != null)
             {
                 transaction.PaymentStatus = "Completed";
                 transaction.AmountPaid = decimal.Parse(amount_settled);
-                _dbContext.SaveChanges();
+                _transactionService.SaveTransactions(_transactionService.GetTransactions());
             }
 
             return Ok("Payment successful. Thank you for your purchase.");
@@ -92,11 +91,12 @@ public class PaymentController : ControllerBase
     {
         if (payment_status == "CANCELLED")
         {
-            var transaction = _dbContext.Transactions.FirstOrDefault(t => t.MerchantId == m_payment_id);
+            var transaction = _transactionService.GetTransactions()
+                .FirstOrDefault(t => t.MerchantId == m_payment_id);
             if (transaction != null)
             {
-                transaction.PaymentStatus = "Canceled";
-                _dbContext.SaveChanges();
+                transaction.PaymentStatus = "Canceled";                
+                _transactionService.SaveTransactions(_transactionService.GetTransactions());
             }
 
             return Ok("Payment was canceled. Please try again.");
@@ -123,12 +123,13 @@ public class PaymentController : ControllerBase
 
         if (isValid)
         {
-            var transaction = _dbContext.Transactions.FirstOrDefault(t => t.MerchantId == m_payment_id);
+            var transaction = _transactionService.GetTransactions()
+                .FirstOrDefault(t => t.MerchantId == m_payment_id);
             if (transaction != null)
             {
                 transaction.PaymentStatus = payment_status;
                 transaction.AmountPaid = decimal.Parse(amount_settled);
-                _dbContext.SaveChanges();
+                _transactionService.SaveTransactions(_transactionService.GetTransactions());
             }
 
             return Ok("Notification received and processed.");
@@ -142,7 +143,7 @@ public class PaymentController : ControllerBase
     [HttpGet("all-transactions")]
     public IActionResult GetAllTransactions()
     {
-        var transactions = _dbContext.Transactions.ToList();
+        var transactions = _transactionService.GetTransactions();
         return Ok(transactions);
     }
 
