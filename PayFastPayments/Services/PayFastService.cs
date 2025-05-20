@@ -29,9 +29,9 @@ public class PayFastService
             { "item_name", "Sample Item" },
             { "item_description", "Test Payment" },
             { "email_address", "test@gmail.com" },
-            { "return_url", "https://your-app-url.com/api/payment/payment-success" },
-            { "cancel_url", "https://your-app-url.com/api/payment/payment-cancel" },
-            { "notify_url", "https://your-app-url.com/api/payment/payment-notify" },
+            { "return_url", "https://payfastpayments.onrender.com/api/payment/payment-success" },
+            { "cancel_url", "https://payfastpayments.onrender.com/api/payment/payment-cancel" },
+            { "notify_url", "https://payfastpayments.onrender.com/api/payment/payment-notify" },
         };
 
         var signature = CreateSignature(data);
