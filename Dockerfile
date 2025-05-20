@@ -5,8 +5,8 @@ EXPOSE 80
 
 FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
 WORKDIR /src
-COPY ["PayFastPayments/PayFastPayments.csproj", "PayFastPayments/"]
-RUN dotnet restore "PayFastPayments/PayFastPayments.csproj"
+COPY ["PayFastPayments.csproj", "/"]
+RUN dotnet restore "PayFastPayments.csproj"
 COPY . .
 WORKDIR "/src/PayFastPayments"
 RUN dotnet build "PayFastPayments.csproj" -c Release -o /app/build
