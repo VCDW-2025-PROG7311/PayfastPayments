@@ -1,0 +1,12 @@
+{
+  "Version": 1,
+  "Hash": "xUOgtmSpPAHIaB16M7RsHC8tIpeuRkjEDJD6r2q4I04=",
+  "Source": "PayFastPayments",
+  "BasePath": "_content/PayFastPayments",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [],
+  "Assets": [],
+  "Endpoints": []
+}

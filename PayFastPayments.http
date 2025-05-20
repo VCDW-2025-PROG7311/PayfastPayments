@@ -1,0 +1,6 @@
+@PayFastPayments_HostAddress = http://localhost:5052
+
+GET {{PayFastPayments_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
