@@ -2,11 +2,9 @@ using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add PostgreSQL and Entity Framework Core, using the connection string from environment variable
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseNpgsql(builder.Configuration["ConnectionStrings__DefaultConnection"]));
+    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-// Read PayFast configuration from environment variables
 builder.Services.AddScoped<PayFastService>(serviceProvider =>
 {
     var configuration = builder.Configuration;
