@@ -22,7 +22,7 @@ public class PaymentController : ControllerBase
     {
         return Ok("App is running!");
     }
-    
+
     [HttpPost("initiate-payment")]
     public IActionResult InitiatePayment(decimal amount)
     {
@@ -33,8 +33,9 @@ public class PaymentController : ControllerBase
             MerchantId = Environment.GetEnvironmentVariable("PayFast__MerchantId"),
             Amount = amount,
             PaymentStatus = "Initiated",
-            PaymentDate = DateTime.Now
+            PaymentDate = DateTime.UtcNow, // Use UTC time instead of local time
         };
+
         _dbContext.Transactions.Add(transaction);
         _dbContext.SaveChanges();
 
