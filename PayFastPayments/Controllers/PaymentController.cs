@@ -43,8 +43,9 @@ public class PaymentController : ControllerBase
     }
 
     [HttpGet("payment-success")]
-    public IActionResult PaymentSuccess([FromQuery] string payment_status)
+    public IActionResult PaymentSuccess(string payment_status)
     {
+        System.Console.WriteLine("Success - " + payment_status);
         if (payment_status == "COMPLETE")
         {
 
@@ -57,8 +58,9 @@ public class PaymentController : ControllerBase
     }
 
     [HttpGet("payment-cancel")]
-    public IActionResult PaymentCancel([FromQuery] string payment_status)
+    public IActionResult PaymentCancel(string payment_status)
     {
+        System.Console.WriteLine("Cancelled - " + payment_status);
         if (payment_status == "CANCELLED")
         {
             return Ok("Payment was canceled. Please try again.");
@@ -70,9 +72,10 @@ public class PaymentController : ControllerBase
     }
 
     [HttpPost("payment-notify")]
-    public IActionResult PaymentNotify([FromQuery] string pf_payment_id,
-        [FromQuery] string payment_status,[FromQuery] string amount_settled, [FromQuery] string item_name)
+    public IActionResult PaymentNotify(string pf_payment_id, string payment_status, string amount_settled, string item_name)
     {
+        System.Console.WriteLine("Notified - " + payment_status);
+
         if (payment_status == "COMPLETE")
         {
             var transaction = _transactionService.GetTransactions()
