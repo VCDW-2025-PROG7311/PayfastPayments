@@ -2,7 +2,7 @@ using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Mvc;
 
 
-public class PayFastNotification
+public class ITN_Payload
 {
     [FromForm(Name = "payment_status")]
     [Required]
