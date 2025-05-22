@@ -39,8 +39,6 @@ public class PayFastService
         };
 
         var signature = CreateSignature(data);
-        // var signature = "949137cf0a104a76fb59fb1105815629";  // /integration-test --> works
-        // var signature = "c9099e29757147f6ed2581083f7fdd30";    // /integration tools --> doesn't work.
 
         data.Add("signature", signature);
         

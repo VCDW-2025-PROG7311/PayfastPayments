@@ -7,10 +7,10 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddScoped<PayFastService>(serviceProvider =>
 {
     var configuration = builder.Configuration;
-    var merchantId = configuration["PayFast__MerchantId"];
-    var merchantKey = configuration["PayFast__MerchantKey"];
-    var passphrase = configuration["PayFast__Passphrase"];
-    var sandboxUrl = configuration["PayFast__SandboxUrl"];    
+    var merchantId = configuration["PayFast_MerchantId"];
+    var merchantKey = configuration["PayFast_MerchantKey"];
+    var passphrase = configuration["PayFast_Passphrase"];
+    var sandboxUrl = configuration["PayFast_SandboxUrl"];    
     return new PayFastService(merchantId, merchantKey, passphrase, sandboxUrl);
 });
 
