@@ -3,6 +3,7 @@ using System.Globalization;
 using System.Net.Http;
 using System.Security.Cryptography;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Web;
 using Microsoft.AspNetCore.Mvc;
@@ -27,20 +28,20 @@ public class PayFastService
         var data = new Dictionary<string, string>
         {
             { "merchant_id", _merchantId },
-            { "merchant_key", _merchantKey },
-            { "amount", amount.ToString("F2", CultureInfo.InvariantCulture) },
-            { "item_name", itemName },
-            { "item_description", itemDescription },
-            { "email_address", emailAddress },
+            { "merchant_key", _merchantKey },            
             { "return_url", "https://payfastpayments.onrender.com/api/payment/payment-success" },
             { "cancel_url", "https://payfastpayments.onrender.com/api/payment/payment-cancel" },
             { "notify_url", "https://payfastpayments.onrender.com/api/payment/payment-notify" },
+            { "email_address", emailAddress },
+            { "amount", amount.ToString("F2", CultureInfo.InvariantCulture) },
+            { "item_name", itemName },
+            { "item_description", itemDescription },
         };
 
         var signature = CreateSignature(data);
-        // test: "949137cf0a104a76fb59fb1105815629" - works
-        // tools: c9099e29757147f6ed2581083f7fdd30 - generates as this, doesn't work.
-        
+        // var signature = "949137cf0a104a76fb59fb1105815629";  // /integration-test --> works
+        // var signature = "c9099e29757147f6ed2581083f7fdd30";    // /integration tools --> doesn't work.
+
         data.Add("signature", signature);
         
         var url = $"https://sandbox.payfast.co.za/eng/process";
@@ -73,31 +74,86 @@ public class PayFastService
         return htmlForm;        
     }
 
+    // Portions adapted from Payfast Nuget Package Code
     public string CreateSignature(Dictionary<string, string> data)
     {
         var orderedData = new List<KeyValuePair<string, string>>
         {
-            new KeyValuePair<string, string>("merchant_id", data["merchant_id"]),
-            new KeyValuePair<string, string>("merchant_key", data["merchant_key"]),
-            new KeyValuePair<string, string>("return_url", data["return_url"]),
-            new KeyValuePair<string, string>("cancel_url", data["cancel_url"]),
-            new KeyValuePair<string, string>("notify_url", data["notify_url"]),
-            new KeyValuePair<string, string>("email_address", data["email_address"]),
-            new KeyValuePair<string, string>("amount", data["amount"]),
-            new KeyValuePair<string, string>("item_name", data["item_name"]),
-            new KeyValuePair<string, string>("item_description", data["item_description"]),
+            new KeyValuePair<string, string>("merchant_id", data.ContainsKey("merchant_id") ? data["merchant_id"] : ""),
+            new KeyValuePair<string, string>("merchant_key", data.ContainsKey("merchant_key") ? data["merchant_key"] : ""),
+            new KeyValuePair<string, string>("return_url", data.ContainsKey("return_url") ? data["return_url"] : ""),
+            new KeyValuePair<string, string>("cancel_url", data.ContainsKey("cancel_url") ? data["cancel_url"] : ""),
+            new KeyValuePair<string, string>("notify_url", data.ContainsKey("notify_url") ? data["notify_url"] : ""),
+            new KeyValuePair<string, string>("email_address", data.ContainsKey("email_address") ? data["email_address"] : ""),
+            new KeyValuePair<string, string>("amount", data.ContainsKey("amount") ? data["amount"] : ""),
+            new KeyValuePair<string, string>("item_name", data.ContainsKey("item_name") ? data["item_name"] : ""),
+            new KeyValuePair<string, string>("item_description", data.ContainsKey("item_description") ? data["item_description"] : ""),
             new KeyValuePair<string, string>("passphrase", _passphrase)
         };
 
-        var concatenatedString = string.Join("&", orderedData
-            .Where(kv => !string.IsNullOrEmpty(kv.Value))
-            .Select(kv => $"{kv.Key}={kv.Value}"));
-        
-        using (var md5 = MD5.Create())
+        var payload = new StringBuilder();
+        foreach (var item in orderedData)
         {
-            var hashBytes = md5.ComputeHash(Encoding.UTF8.GetBytes(concatenatedString));
-            return BitConverter.ToString(hashBytes).Replace("-", "").ToLower();
+            if (item.Key != orderedData.Last().Key)
+            {
+                payload.Append($"{item.Key}={UrlEncode(item.Value)}&");
+            }
+            else
+            {
+                payload.Append($"{item.Key}={UrlEncode(item.Value)}");
+            }
         }
+
+        var md5 = MD5.Create();
+        var inputBytes = Encoding.ASCII.GetBytes(payload.ToString());
+        var hash = md5.ComputeHash(inputBytes);
+
+        var signature = new StringBuilder();
+        for (int i = 0; i < hash.Length; i++)
+        {
+            signature.Append(hash[i].ToString("x2"));
+        }
+        System.Console.WriteLine(signature.ToString());
+        return signature.ToString();
+    }
+
+
+    // Adapted from Payfast Nuget Package Code
+    protected string UrlEncode(string url)
+    {
+        Dictionary<string, string> convertPairs = new Dictionary<string, string>() { { "%", "%25" }, { "!", "%21" }, { "#", "%23" }, { " ", "+" },
+        { "$", "%24" }, { "&", "%26" }, { "'", "%27" }, { "(", "%28" }, { ")", "%29" }, { "*", "%2A" }, { "+", "%2B" }, { ",", "%2C" },
+        { "/", "%2F" }, { ":", "%3A" }, { ";", "%3B" }, { "=", "%3D" }, { "?", "%3F" }, { "@", "%40" }, { "[", "%5B" }, { "]", "%5D" } };
+        var replaceRegex = new Regex(@"[%!# $&'()*+,/:;=?@\[\]]");
+        MatchEvaluator matchEval = match => convertPairs[match.Value];
+        string encoded = replaceRegex.Replace(url, matchEval);
+        return encoded;
+    }
+        
+        
+
+    protected string CreateHash(StringBuilder input)
+    {
+        var inputStringBuilder = new StringBuilder(input.ToString());
+        if (!string.IsNullOrWhiteSpace(_passphrase))
+        {
+            inputStringBuilder.Append($"passphrase={this.UrlEncode(this._passphrase)}");
+        }
+
+        var md5 = MD5.Create();
+
+        var inputBytes = Encoding.ASCII.GetBytes(inputStringBuilder.ToString());
+
+        var hash = md5.ComputeHash(inputBytes);
+
+        var stringBuilder = new StringBuilder();
+
+        for (int i = 0; i < hash.Length; i++)
+        {
+            stringBuilder.Append(hash[i].ToString("x2"));
+        }
+
+        return stringBuilder.ToString();
     }
 
     public async Task<string> VerifyPaymentResponseAsync(string response)
