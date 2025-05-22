@@ -28,10 +28,12 @@ When a user initiates a payment using your API, they are redirected to PayFast�
 - PayFast Sandbox account
 
 ### Disclaimers
-1. The available documentation is exceptionally bad! I needed to say it!!
-2. I have made some unconventional decisions in how I take the user to the payment gateway. Its not a bad decision, but I would like to re-work it if time permits.
-3. This is the start. Explore more on your own...
+1. There is [Payfast nuget package](https://www.nuget.org/packages/PayFast) - so why this? I think there are many lessons to be had from building it manually
+2. The available documentation is exceptionally bad! I needed to say it!!
+3. I have made some unconventional decisions in how I take the user to the payment gateway. Its not a bad decision, but I would like to re-work it if time permits.
+4. This is the start. Explore more on your own...
 
+### Advice
 By now, you should not need any guidance - try to build this on your own!
 
 
