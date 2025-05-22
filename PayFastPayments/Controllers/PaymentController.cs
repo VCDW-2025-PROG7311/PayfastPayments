@@ -55,7 +55,7 @@ public class PaymentController : ControllerBase
     }
 
     [HttpPost("payment-notify")]
-    public IActionResult PaymentNotify([FromBody] PayFastNotification notification)
+    public IActionResult PaymentNotify([FromForm] PayFastNotification notification)
     {
         System.Console.WriteLine("Notified - " + notification.PaymentStatus);
 
@@ -70,13 +70,8 @@ public class PaymentController : ControllerBase
                 transaction.AmountPaid = notification.AmountGross;
                 _transactionService.SaveTransactions(_transactionService.GetTransactions());
             }
-
-            return Ok("Payment successful. Thank you for your purchase.");
         }
-        else
-        {
-            return BadRequest("Payment was not successful.");
-        }
+        return Ok();
     }
 
     [HttpGet("all-transactions")]
