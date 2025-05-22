@@ -58,35 +58,44 @@ public class PaymentController : ControllerBase
     public async Task<IActionResult> Notify()
     {
         var form = await Request.ReadFormAsync();
-        foreach (var key in form.Keys)
+        var notification = new PaymentNotification
         {
-            Console.WriteLine($"{key}: {form[key]}");
-        }
+            PaymentStatus = form["payment_status"],
+            PfPaymentId = form["pf_payment_id"],
+            MPaymentId = form["m_payment_id"],
+            ItemName = form["item_name"],
+            ItemDescription = form["item_description"],
+            AmountGross = decimal.TryParse(form["amount_gross"], out var gross) ? gross : 0,
+            AmountFee = decimal.TryParse(form["amount_fee"], out var fee) ? fee : 0,
+            AmountNet = decimal.TryParse(form["amount_net"], out var net) ? net : 0,
+            CustomStr1 = form["custom_str1"],
+            CustomStr2 = form["custom_str2"],
+            CustomStr3 = form["custom_str3"],
+            CustomStr4 = form["custom_str4"],
+            CustomStr5 = form["custom_str5"],
+            EmailAddress = form["email_address"],
+            MerchantId = form["merchant_id"],
+            Signature = form["signature"]
+        };
 
-        return Ok();
-    }
-    /**
-    [HttpPost("payment-notify")]
-    public IActionResult PaymentNotify([FromForm] ITN_Payload ITN_payload)
-    {
-        System.Console.WriteLine("Notified - " + ITN_payload.PaymentStatus);
-
-        if (ITN_payload.PaymentStatus == "COMPLETE")
+        if (notification.PaymentStatus == "COMPLETE")
         {
-            var transaction = _transactionService.GetTransactions()
-                .FirstOrDefault(t => t.OrderId == ITN_payload.ItemName);
+            var transactions = _transactionService.GetTransactions();
+            var transaction = transactions.FirstOrDefault(t => t.OrderId == notification.ItemName);
+            
             if (transaction != null)
             {
-                transaction.PaymentId = ITN_payload.PfPaymentId;
-                transaction.PaymentStatus = ITN_payload.PaymentStatus;
-                transaction.AmountPaid = ITN_payload.AmountGross;
-                _transactionService.SaveTransactions(_transactionService.GetTransactions());
+                transaction.PaymentId = notification.PfPaymentId;
+                transaction.PaymentStatus = notification.PaymentStatus;
+                transaction.AmountPaid = notification.AmountGross;
+
+                _transactionService.SaveTransactions(transactions); // Save updated list
             }
         }
+
         return Ok();
     }
-    **/
-
+    
     [HttpGet("all-transactions")]
     public IActionResult GetAllTransactions()
     {
