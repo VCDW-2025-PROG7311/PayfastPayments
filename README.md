@@ -4,7 +4,6 @@ This activity designed to expose you to the process of integrating PayFast into 
 You will learn how to initiate payments, receive ITN (Instant Transaction Notification) messages, and persist transaction data to a JSON file.
 You will also learn how to deploy the application to Render using Docker.
 
----
 ### Introduction
 In this activity, you will:
 - Build an ASP.NET Core Web API
@@ -12,8 +11,6 @@ In this activity, you will:
 - Store transaction details in a local JSON file
 - Handle payment confirmation through the ITN system
 - Deploy your project to the Render cloud platform
-
----
 
 ### How PayFast Integration Works
 When a user initiates a payment using your API, they are redirected to PayFastâ€™s payment gateway using an automatically submitted HTML form. PayFast handles the payment and notifies your application through a server-to-server callback known as an ITN (Instant Transaction Notification). Your application listens for this notification, verifies it, and updates the relevant transaction record in your system. This allows you to confirm and record payments securely.
@@ -23,8 +20,6 @@ When a user initiates a payment using your API, they are redirected to PayFastâ€
 3. After payment, PayFast sends an ITN (a POST request) to your backend.
 4. Your backend receives the ITN, parses the form data, and updates the transaction.
 
----
-
 ### Prerequisites
 - .NET SDK 9.0 installed
 - Docker installed and working
@@ -32,7 +27,11 @@ When a user initiates a payment using your API, they are redirected to PayFastâ€
 - Render.com account
 - PayFast Sandbox account
 
-###
+### Disclaimers
+1. The available documentation is exceptionallyÂ bad! I needed to say it!!
+2. I have made some unconventional decisions in how I take the user to the payment gateway. Its not a bad decision, but I would like to re-work it if time permits.
+3. This is the start. Explore more on your own...
+
 By now, you should not need any guidance - try to build this on your own!
 
 
