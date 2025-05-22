@@ -43,7 +43,7 @@ public class PaymentController : ControllerBase
     }
 
     [HttpGet("payment-success")]
-    public IActionResult PaymentSuccess(string payment_status)
+    public IActionResult PaymentSuccess()
     {
         return Ok("Payment successful. Thank you for your purchase.");     
     }

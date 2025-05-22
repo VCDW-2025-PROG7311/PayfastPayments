@@ -9,12 +9,14 @@ public class PayFastNotification
     public string PaymentStatus { get; set; }
 
     [FromForm(Name = "pf_payment_id")]
+    [Required]
     public string PfPaymentId { get; set; }
 
     [FromForm(Name = "m_payment_id")]
     public string MPaymentId { get; set; }
 
     [FromForm(Name = "item_name")]
+    [Required]
     public string ItemName { get; set; }
 
     [FromForm(Name = "item_description")]
@@ -48,6 +50,7 @@ public class PayFastNotification
     public string EmailAddress { get; set; }
 
     [FromForm(Name = "merchant_id")]
+    [Required]
     public string MerchantId { get; set; }
 
     [FromForm(Name = "signature")]
