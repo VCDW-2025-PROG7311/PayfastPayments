@@ -72,19 +72,19 @@ public class PaymentController : ControllerBase
     }
 
     [HttpPost("payment-notify")]
-    public IActionResult PaymentNotify(string pf_payment_id, string payment_status, string amount_settled, string item_name)
+    public IActionResult PaymentNotify([FromForm] PayFastNotification notification)
     {
-        System.Console.WriteLine("Notified - " + payment_status);
+        System.Console.WriteLine("Notified - " + notification.PaymentStatus);
 
-        if (payment_status == "COMPLETE")
+        if (notification.PaymentStatus == "COMPLETE")
         {
             var transaction = _transactionService.GetTransactions()
-                .FirstOrDefault(t => t.OrderId == item_name);
+                .FirstOrDefault(t => t.OrderId == notification.ItemName);
             if (transaction != null)
             {
-                transaction.PaymentId = pf_payment_id;
-                transaction.PaymentStatus = payment_status;
-                transaction.AmountPaid = decimal.Parse(amount_settled);
+                transaction.PaymentId = notification.PfPaymentId;
+                transaction.PaymentStatus = notification.PaymentStatus;
+                transaction.AmountPaid = notification.AmountGross;
                 _transactionService.SaveTransactions(_transactionService.GetTransactions());
             }
 
