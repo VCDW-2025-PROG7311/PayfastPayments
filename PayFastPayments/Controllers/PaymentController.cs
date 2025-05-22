@@ -1,8 +1,4 @@
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Configuration;
-using System;
-using System.Linq;
-using System.Threading.Tasks;
 
 [Route("api/[controller]")]
 [ApiController]
@@ -91,19 +87,7 @@ public class PaymentController : ControllerBase
 
                 _transactionService.SaveTransactions(transactions);
             }
-        } else if(notification.PaymentStatus == "CANCELLED")
-        {
-            var transactions = _transactionService.GetTransactions();
-            var transaction = transactions.FirstOrDefault(t => t.OrderId == notification.ItemName);
-            
-            if (transaction != null)
-            {
-                transaction.PaymentId = notification.PfPaymentId;
-                transaction.PaymentStatus = notification.PaymentStatus;
-                _transactionService.SaveTransactions(transactions);
-            }
         }
-
         return Ok();
     }
     

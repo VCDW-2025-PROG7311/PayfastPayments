@@ -1,12 +1,7 @@
-using System.Collections.Generic;
 using System.Globalization;
-using System.Net.Http;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
-using System.Web;
-using Microsoft.AspNetCore.Mvc;
 
 public class PayFastService
 {
@@ -42,7 +37,7 @@ public class PayFastService
 
         data.Add("signature", signature);
         
-        var url = $"https://sandbox.payfast.co.za/eng/process";
+        var url = _sandboxUrl;
 
         var formData = data.Select(kv => $"<input type='hidden' name='{kv.Key}' value='{kv.Value}' />").ToList();
 
@@ -124,29 +119,5 @@ public class PayFastService
         MatchEvaluator matchEval = match => convertPairs[match.Value];
         string encoded = replaceRegex.Replace(url, matchEval);
         return encoded;
-    }
-        
-    protected string CreateHash(StringBuilder input)
-    {
-        var inputStringBuilder = new StringBuilder(input.ToString());
-        if (!string.IsNullOrWhiteSpace(_passphrase))
-        {
-            inputStringBuilder.Append($"passphrase={this.UrlEncode(this._passphrase)}");
-        }
-
-        var md5 = MD5.Create();
-
-        var inputBytes = Encoding.ASCII.GetBytes(inputStringBuilder.ToString());
-
-        var hash = md5.ComputeHash(inputBytes);
-
-        var stringBuilder = new StringBuilder();
-
-        for (int i = 0; i < hash.Length; i++)
-        {
-            stringBuilder.Append(hash[i].ToString("x2"));
-        }
-
-        return stringBuilder.ToString();
     }
 }

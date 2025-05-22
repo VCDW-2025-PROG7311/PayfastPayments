@@ -1,7 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Mvc;
 
-
 public class PaymentNotification
 {
     [FromForm(Name = "payment_status")]
