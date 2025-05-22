@@ -32,7 +32,7 @@ public class PaymentController : ControllerBase
             OrderDescription = orderDescription,
             Email = email,
             Amount = amount,
-            PaymentStatus = "Initiated",
+            PaymentStatus = "PENDING",
             PaymentDate = DateTime.UtcNow,
         };
 
@@ -89,7 +89,18 @@ public class PaymentController : ControllerBase
                 transaction.PaymentStatus = notification.PaymentStatus;
                 transaction.AmountPaid = notification.AmountGross;
 
-                _transactionService.SaveTransactions(transactions); // Save updated list
+                _transactionService.SaveTransactions(transactions);
+            }
+        } else if(notification.PaymentStatus == "CANCELLED")
+        {
+            var transactions = _transactionService.GetTransactions();
+            var transaction = transactions.FirstOrDefault(t => t.OrderId == notification.ItemName);
+            
+            if (transaction != null)
+            {
+                transaction.PaymentId = notification.PfPaymentId;
+                transaction.PaymentStatus = notification.PaymentStatus;
+                _transactionService.SaveTransactions(transactions);
             }
         }
 
