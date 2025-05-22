@@ -5,11 +5,17 @@ builder.Services.AddSingleton<TransactionService>();
 builder.Services.AddScoped<PayFastService>(serviceProvider =>
 {
     var configuration = builder.Configuration;
+
+    var merchantId = "10012457";
+    var merchantKey = "xc24r4ak3r9mu";
+    var passphrase = "prog73112025";
+    var sandboxUrl = "https://sandbox.payfast.co.za/eng/process";
+    /**
     var merchantId = configuration["PayFast__MerchantId"];
     var merchantKey = configuration["PayFast__MerchantKey"];
     var passphrase = configuration["PayFast__Passphrase"];
     var sandboxUrl = configuration["PayFast__SandboxUrl"];
-    
+    **/
     return new PayFastService(merchantId, merchantKey, passphrase, sandboxUrl);
 });
 

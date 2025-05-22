@@ -23,11 +23,9 @@ public class PaymentController : ControllerBase
         return Ok("App is running!");
     }
 
-    [HttpPost("initiate-payment")]
+    [HttpGet("initiate-payment")]
     public IActionResult InitiatePayment(decimal amount)
     {
-        var paymentUrl = _payFastService.GeneratePaymentData(amount);
-
         var transaction = new Transaction
         {
             MerchantId = Environment.GetEnvironmentVariable("PayFast__MerchantId"),
@@ -37,7 +35,9 @@ public class PaymentController : ControllerBase
         };
 
         _transactionService.AddTransaction(transaction);
-        return Redirect(paymentUrl);
+        string htmlForm = _payFastService.GeneratePaymentData(amount, "0001", "testing", "test@gmail.com");
+
+        return Content(htmlForm, "text/html");
     }
 
     [HttpPost("verify-payment")]
