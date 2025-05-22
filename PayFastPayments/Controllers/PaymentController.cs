@@ -55,6 +55,18 @@ public class PaymentController : ControllerBase
     }
 
     [HttpPost("payment-notify")]
+    public async Task<IActionResult> Notify()
+    {
+        var form = await Request.ReadFormAsync();
+        foreach (var key in form.Keys)
+        {
+            Console.WriteLine($"{key}: {form[key]}");
+        }
+
+        return Ok();
+    }
+    /**
+    [HttpPost("payment-notify")]
     public IActionResult PaymentNotify([FromForm] ITN_Payload ITN_payload)
     {
         System.Console.WriteLine("Notified - " + ITN_payload.PaymentStatus);
@@ -73,6 +85,7 @@ public class PaymentController : ControllerBase
         }
         return Ok();
     }
+    **/
 
     [HttpGet("all-transactions")]
     public IActionResult GetAllTransactions()
