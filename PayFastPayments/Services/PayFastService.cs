@@ -111,10 +111,8 @@ public class PayFastService
         {
             signature.Append(hash[i].ToString("x2"));
         }
-        System.Console.WriteLine(signature.ToString());
         return signature.ToString();
     }
-
 
     // Adapted from Payfast Nuget Package Code
     protected string UrlEncode(string url)
@@ -128,8 +126,6 @@ public class PayFastService
         return encoded;
     }
         
-        
-
     protected string CreateHash(StringBuilder input)
     {
         var inputStringBuilder = new StringBuilder(input.ToString());
@@ -153,56 +149,4 @@ public class PayFastService
 
         return stringBuilder.ToString();
     }
-
-    public async Task<string> VerifyPaymentResponseAsync(string response)
-    {
-        var values = ParseQueryString(response);
-
-        var responseSignature = values["signature"];
-        values.Remove("signature");
-
-        var calculatedSignature = CreateSignature(values);
-
-        if (responseSignature == calculatedSignature)
-        {
-            return "Valid Payment Response";
-        }
-        else
-        {
-            return "Invalid Payment Response";
-        }
-    }
-
-    private Dictionary<string, string> ParseQueryString(string queryString)
-    {
-        return queryString.Split('&')
-                          .Select(param => param.Split('='))
-                          .ToDictionary(param => param[0], param => param[1]);
-    }
-
-public async Task<bool> ValidateNotificationAsync(string m_payment_id, string pf_payment_id, string payment_status)
-{
-    var notificationData = new Dictionary<string, string>
-    {
-        { "m_payment_id", m_payment_id },
-        { "pf_payment_id", pf_payment_id },
-        { "payment_status", payment_status }
-    };
-
-    var notificationSignature = notificationData["signature"];
-
-    notificationData.Remove("signature");
-
-    var calculatedSignature = CreateSignature(notificationData);
-
-    if (notificationSignature == calculatedSignature)
-    {
-        return true;
-    }
-    else
-    {
-        return false;
-    }
-}
-
 }
