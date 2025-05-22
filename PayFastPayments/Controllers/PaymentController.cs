@@ -45,34 +45,17 @@ public class PaymentController : ControllerBase
     [HttpGet("payment-success")]
     public IActionResult PaymentSuccess(string payment_status)
     {
-        System.Console.WriteLine("Success - " + payment_status);
-        if (payment_status == "COMPLETE")
-        {
-
-            return Ok("Payment successful. Thank you for your purchase.");
-        }
-        else
-        {
-            return BadRequest("Payment was not successful.");
-        }
+        return Ok("Payment successful. Thank you for your purchase.");     
     }
 
     [HttpGet("payment-cancel")]
-    public IActionResult PaymentCancel(string payment_status)
+    public IActionResult PaymentCancel()
     {
-        System.Console.WriteLine("Cancelled - " + payment_status);
-        if (payment_status == "CANCELLED")
-        {
-            return Ok("Payment was canceled. Please try again.");
-        }
-        else
-        {
-            return BadRequest("Payment cancellation failed.");
-        }
+        return Ok("Payment was canceled. Please try again.");        
     }
 
     [HttpPost("payment-notify")]
-    public IActionResult PaymentNotify([FromForm] PayFastNotification notification)
+    public IActionResult PaymentNotify([FromBody] PayFastNotification notification)
     {
         System.Console.WriteLine("Notified - " + notification.PaymentStatus);
 
