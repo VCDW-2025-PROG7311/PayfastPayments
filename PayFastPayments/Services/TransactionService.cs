@@ -27,4 +27,11 @@ public class TransactionService
         transactions.Add(transaction);
         SaveTransactions(transactions);
     }
+
+    public void ClearTransactions()
+    {
+        var emptyList = new List<Transaction>();
+        var json = JsonConvert.SerializeObject(emptyList, Formatting.Indented);
+        File.WriteAllText(_filePath, json);
+    }
 }

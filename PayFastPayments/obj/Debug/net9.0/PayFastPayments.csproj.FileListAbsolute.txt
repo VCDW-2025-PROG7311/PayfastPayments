@@ -34,3 +34,6 @@ C:\Users\ebada\OneDrive\Desktop\PROG7311 2025\PayFastPayments\PayFastPayments\Pa
 C:\Users\ebada\OneDrive\Desktop\PROG7311 2025\PayFastPayments\PayFastPayments\PayFastPayments\obj\Debug\net9.0\ref\PayFastPayments.dll
 C:\Users\ebada\OneDrive\Desktop\PROG7311 2025\PayFastPayments\PayFastPayments\PayFastPayments\bin\Debug\net9.0\transactions.json
 C:\Users\ebada\OneDrive\Desktop\PROG7311 2025\PayFastPayments\PayFastPayments\PayFastPayments\bin\Debug\net9.0\Newtonsoft.Json.dll
+c:\Users\ebada\OneDrive\Desktop\PROG7311 2025\PayFastPayments\PayFastPayments\PayFastPayments\bin\Debug\net9.0\Swashbuckle.AspNetCore.Swagger.dll
+c:\Users\ebada\OneDrive\Desktop\PROG7311 2025\PayFastPayments\PayFastPayments\PayFastPayments\bin\Debug\net9.0\Swashbuckle.AspNetCore.SwaggerGen.dll
+c:\Users\ebada\OneDrive\Desktop\PROG7311 2025\PayFastPayments\PayFastPayments\PayFastPayments\bin\Debug\net9.0\Swashbuckle.AspNetCore.SwaggerUI.dll

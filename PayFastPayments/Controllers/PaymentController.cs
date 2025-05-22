@@ -16,7 +16,7 @@ public class PaymentController : ControllerBase
         _transactionService = transactionService;
         _payFastService = payFastService;
     }
-    
+
     [HttpGet("health")]
     public IActionResult HealthCheck()
     {
@@ -24,7 +24,7 @@ public class PaymentController : ControllerBase
     }
 
     [HttpGet("initiate-payment")]
-    public IActionResult InitiatePayment(decimal amount)
+    public IActionResult InitiatePayment(string orderId, string orderDescription, string email, decimal amount)
     {
         var transaction = new Transaction
         {
@@ -35,7 +35,7 @@ public class PaymentController : ControllerBase
         };
 
         _transactionService.AddTransaction(transaction);
-        string htmlForm = _payFastService.GeneratePaymentData(amount, "0001", "testing", "test@gmail.com");
+        string htmlForm = _payFastService.GeneratePaymentData(amount, orderId, orderDescription, email);
 
         return Content(htmlForm, "text/html");
     }
@@ -95,7 +95,7 @@ public class PaymentController : ControllerBase
                 .FirstOrDefault(t => t.MerchantId == m_payment_id);
             if (transaction != null)
             {
-                transaction.PaymentStatus = "Canceled";                
+                transaction.PaymentStatus = "Canceled";
                 _transactionService.SaveTransactions(_transactionService.GetTransactions());
             }
 
@@ -146,5 +146,14 @@ public class PaymentController : ControllerBase
         var transactions = _transactionService.GetTransactions();
         return Ok(transactions);
     }
+
+    [HttpGet("clear-transactions")]
+    public IActionResult ClearTransactins()
+    {
+        _transactionService.ClearTransactions();
+        return Ok();
+    }
+    
+    
 
 }
